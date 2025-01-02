@@ -13,7 +13,7 @@ class StoreProductRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,28 @@ class StoreProductRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => ['required', 'unique:products', 'max:255'],
+            'price' => ['required'],
+            'description' => ['required'],
+            'category' => ['required'],
+            'image' => ['nullable']
+        ];
+    }
+
+    protected function prepareForValidation() {
+        $this->merge([
+            'image_url' => $this->image
+        ]);
+    }
+
+    public function messages(): array {
+        return [
+            'name.required' => 'A name is required.',
+            'name.unique' => 'A product with this name already exists.',
+            'name.max' => 'The name must exceed 255 characters.',
+            'price' => 'The product must contain a price.',
+            'description' => 'The product must contain a description.',
+            'category' => 'The product must contain a category.'
         ];
     }
 }
