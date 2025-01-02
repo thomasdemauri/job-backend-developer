@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Resources\ProductResource;
+use PHPUnit\Framework\Constraint\IsEmpty;
 
 class ProductController extends Controller
 {
@@ -15,7 +17,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        return ProductResource::collection(Product::paginate());
     }
 
     /**
@@ -37,7 +39,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
+        return new ProductResource($product);
     }
 
     /**
@@ -50,6 +52,43 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, Product $product)
     {
         //
+    }
+
+    /**
+     *  Search product by name
+     * 
+     * @param  \App\Models\Product  $product
+     * @return \Illuminate\Http\Response
+     * 
+     */
+    public function showByNameAndCategory(string $name, string $category) {
+
+        $product = Product::where([
+            ['name', $name], ['category', $category]
+        ])->first();
+
+        if (!$product) {
+            return response()->json(['message' => 'Product not found.'], 404);   
+        }
+
+        return new ProductResource($product);
+    }
+
+        /**
+     *  Search product by category
+     * 
+     * @param  \App\Models\Product  $product
+     * @return \Illuminate\Http\Response
+     * 
+     */
+    public function showByCategory(string $category) {
+        $products = Product::where('category', $category)->paginate();
+
+        if ($products->isEmpty()) {
+            return response()->json(['message' => 'Product not found.'], 404);   
+        }
+
+        return ProductResource::collection($products);
     }
 
     /**
