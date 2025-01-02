@@ -23,12 +23,6 @@ Route::resource('products', ProductController::class)->missing(function () {
     return response()->json(['message' => 'Product not found.'], 404);
 });
 
-Route::get('products/name/{name}/category/{category}', [ProductController::class, 'showByNameAndCategory'])
-    ->missing(function () {
-        return response()->json(['message' => 'Product not found.'], 404);
-    });
-
-Route::get('products/category/{category}', [ProductController::class, 'showByCategory'])
-    ->missing(function () {
-        return response()->json(['message' => 'Product not found.'], 404);
-    });
+Route::get('products/name/{name}/category/{category}', [ProductController::class, 'showByNameAndCategory']);
+Route::get('products/name/{name}', [ProductController::class, 'showByName']);
+Route::get('products/category/{category}', [ProductController::class, 'showByCategory']);
