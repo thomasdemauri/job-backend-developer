@@ -56,7 +56,7 @@ class ProductController extends Controller
     }
 
     /**
-     *  Search product by name
+     *  Search product by name and category
      * 
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
@@ -69,6 +69,20 @@ class ProductController extends Controller
         return (!$product) ? response()->json(['message' => 'Product not found.'], 404) : new ProductResource($product);
     }
 
+    /**
+     *  Search product by name with 'like'
+     * 
+     * @param  \App\Models\Product  $product
+     * @return \Illuminate\Http\Response
+     * 
+     */
+    public function showByName(string $name) {
+
+        $products = Product::where('name', 'like', "%$name%")->paginate();
+
+        return ($products->isEmpty()) ? response()->json(['message' => 'Products not found.'], 404) : ProductResource::collection($products);
+    }
+
         /**
      *  Search product by category
      * 
@@ -79,11 +93,8 @@ class ProductController extends Controller
     public function showByCategory(string $category) {
         $products = Product::where('category', $category)->paginate();
 
-        if ($products->isEmpty()) {
-            return response()->json(['message' => 'Product not found.'], 404);   
-        }
+        return ($products->isEmpty()) ? response()->json(['message' => 'Products not found.'], 404) : ProductResource::collection($products);
 
-        return ProductResource::collection($products);
     }
 
     /**
