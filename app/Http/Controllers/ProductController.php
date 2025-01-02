@@ -65,7 +65,7 @@ class ProductController extends Controller
     public function showByNameAndCategory(string $name, string $category) {
 
         $product = Product::where([['name', $name], ['category', $category]])->first();
-        
+
         return (!$product) ? response()->json(['message' => 'Product not found.'], 404) : new ProductResource($product);
     }
 
@@ -94,6 +94,8 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        $product->delete();
+        
+        return new ProductResource($product);
     }
 }
